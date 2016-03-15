@@ -1,9 +1,7 @@
-FROM rhel7
-
-RUN yum -y install java && yum clean all
+FROM jboss/base-jdk:8
 
 EXPOSE 8080
 
-CMD java -jar aloha.jar
-
 ADD target/aloha.jar .
+
+CMD java -jar aloha.jar

@@ -1,6 +1,6 @@
 /**
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2016, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
  * distribution for a full listing of individual contributors.
  * <p/>
@@ -16,28 +16,36 @@
  */
 package com.redhat.developer.msa.aloha;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
 public class AlohaVerticle extends AbstractVerticle {
 
-	@Override
-	public void start() throws Exception {
-		Router router = Router.router(vertx);
-		router.route().handler(BodyHandler.create());
-		router.get("/").handler(ctx -> {
-			String hostname = System.getenv().getOrDefault("HOSTNAME", "unknown");
-			ctx.response()
-					.putHeader("Content-Type", "text/plain")
-					.putHeader("Access-Control-Allow-Origin", "*")
-					.end(String.format("Aloha mai %s", hostname));
-		});
-		router.options("/").handler(ctx ->
-				ctx.response()
-						.putHeader("Access-Control-Allow-Origin", "*")
-						.end());
-		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
-	}
+    @Override
+    public void start() throws Exception {
+        Router router = Router.router(vertx);
+        router.route().handler(BodyHandler.create());
+        router.get("/").handler(ctx -> {
+            String hostname = null;
+            try {
+                hostname = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                hostname = "[local host name could not be resolved into an address]";
+            }
+            ctx.response()
+                .putHeader("Content-Type", "text/plain")
+                .putHeader("Access-Control-Allow-Origin", "*")
+                .end(String.format("Aloha mai %s", hostname));
+        });
+        router.options("/").handler(ctx -> ctx.response()
+            .putHeader("Access-Control-Allow-Origin", "*")
+            .end());
+        vertx.createHttpServer().requestHandler(router::accept).listen(8080);
+        System.out.println("Service running at 0.0.0.0:8080");
+    }
 
 }
