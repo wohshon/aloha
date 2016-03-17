@@ -34,16 +34,13 @@ public class AlohaVerticle extends AbstractVerticle {
             try {
                 hostname = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e) {
-                hostname = "[local host name could not be resolved into an address]";
+                hostname = "unknown";
             }
             ctx.response()
                 .putHeader("Content-Type", "text/plain")
                 .putHeader("Access-Control-Allow-Origin", "*")
                 .end(String.format("Aloha mai %s", hostname));
         });
-        router.options("/").handler(ctx -> ctx.response()
-            .putHeader("Access-Control-Allow-Origin", "*")
-            .end());
         vertx.createHttpServer().requestHandler(router::accept).listen(8080);
         System.out.println("Service running at 0.0.0.0:8080");
     }
