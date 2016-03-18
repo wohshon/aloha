@@ -29,7 +29,7 @@ public class AlohaVerticle extends AbstractVerticle {
     public void start() throws Exception {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
-        router.get("/aloha").handler(ctx -> {
+        router.get("/api/aloha").handler(ctx -> {
             String hostname = null;
             try {
                 hostname = InetAddress.getLocalHost().getHostName();
