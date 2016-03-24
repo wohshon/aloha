@@ -77,6 +77,7 @@
 									<mainClass>com.redhat.developer.msa.aloha.AlohaApplication</mainClass>
 								</transformer>
 							</transformers>
+							<outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
 						</configuration>
 					</execution>
 				</executions>
