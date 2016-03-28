@@ -16,17 +16,17 @@
  */
 package com.redhat.developers.msa.aloha;
 
-import com.netflix.hystrix.HystrixCommandProperties;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.netflix.config.ConfigurationManager;
+
 import feign.hystrix.HystrixFeign;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class AlohaVerticle extends AbstractVerticle {
 
@@ -39,7 +39,7 @@ public class AlohaVerticle extends AbstractVerticle {
      * Setting Hystrix timeout for the chain in 250ms (we only have 1 service to call).
      */
     static {
-        HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(250);
+        ConfigurationManager.getConfigInstance().setProperty("hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds", 250);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class AlohaVerticle extends AbstractVerticle {
     private List<String> alohaChaining() {
         List<String> greetings = new ArrayList<>();
         greetings.add(aloha());
-        greetings.addAll(createFeign().greetings());
+        greetings.add(createFeign().greetings());
         return greetings;
     }
 
@@ -78,7 +78,7 @@ public class AlohaVerticle extends AbstractVerticle {
      */
     private ChainedGreeting createFeign() {
         return HystrixFeign.builder().target(ChainedGreeting.class, NEXT_ENDPOINT_URL,
-            () -> Collections.singletonList("Bonjour response (fallback)"));
+            () -> "Bonjour response (fallback)");
     }
 
     private HttpServerResponse addCORSHeaders(HttpServerResponse response) {
