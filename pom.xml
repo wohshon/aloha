@@ -19,7 +19,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.redhat.developer.msa.aloha</groupId>
+    <groupId>com.redhat.developers.msa.aloha</groupId>
     <artifactId>aloha</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -33,6 +33,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netflix.feign.version>8.15.1</netflix.feign.version>
+        <java.main.class>com.redhat.developers.msa.aloha.AlohaApplication</java.main.class>
     </properties>
 
     <dependencies>
@@ -76,7 +77,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>${version.exec.plugin}</version>
                 <configuration>
-                    <mainClass>com.redhat.developer.msa.aloha.AlohaApplication</mainClass>
+                    <mainClass>${java.main.class}</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -93,7 +94,7 @@
                             <transformers>
                                 <transformer
                                     implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.redhat.developer.msa.aloha.AlohaApplication</mainClass>
+                                    <mainClass>${java.main.class}</mainClass>
                                 </transformer>
                             </transformers>
                             <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar

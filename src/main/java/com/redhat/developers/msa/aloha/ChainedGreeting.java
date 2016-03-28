@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.redhat.developer.msa.aloha;
+package com.redhat.developers.msa.aloha;
 
-import io.vertx.core.Vertx;
+import feign.RequestLine;
 
-public class AlohaApplication {
+import java.util.List;
 
-	public static void main(String[] args) {
-		Vertx vertx = Vertx.vertx();
-		vertx.deployVerticle(new AlohaVerticle());
-		System.out.println("Service running at 0.0.0.0:8080");
-	}
+public interface ChainedGreeting {
+
+	@RequestLine("GET /")
+	public List<String> greetings();
 
 }
