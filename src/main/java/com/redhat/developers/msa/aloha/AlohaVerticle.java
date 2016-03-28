@@ -47,11 +47,12 @@ public class AlohaVerticle extends AbstractVerticle {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
         router.get("/api/aloha").handler(ctx -> {
-            addHeaders(ctx.response())
+            addCORSHeaders(ctx.response())
                 .end(aloha());
         });
         router.get("/api/aloha-chaining").handler(ctx -> {
-            addHeaders(ctx.response())
+            addCORSHeaders(ctx.response())
+                .putHeader("Content-Type", "application/json")
                 .end(Json.encode(alohaChaining()));
         });
         vertx.createHttpServer().requestHandler(router::accept).listen(8080);
@@ -80,11 +81,9 @@ public class AlohaVerticle extends AbstractVerticle {
             () -> Collections.singletonList("Bonjour response (fallback)"));
     }
 
-    private HttpServerResponse addHeaders(HttpServerResponse response) {
+    private HttpServerResponse addCORSHeaders(HttpServerResponse response) {
         return response
-            .putHeader("Content-Type", "application/json")
             .putHeader("Access-Control-Allow-Origin", "*");
     }
-
 
 }
