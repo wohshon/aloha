@@ -21,6 +21,8 @@ import java.util.List;
 
 import com.netflix.config.ConfigurationManager;
 
+import feign.Logger;
+import feign.Logger.Level;
 import feign.hystrix.HystrixFeign;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServerResponse;
@@ -33,7 +35,7 @@ public class AlohaVerticle extends AbstractVerticle {
     /**
      * The next REST endpoint URL of the service chain to be called.
      */
-    private static final String NEXT_ENDPOINT_URL = "http://bonjour:8080/api/bonjour";
+    private static final String NEXT_ENDPOINT_URL = "http://bonjour:8080/";
 
     /**
      * Setting Hystrix timeout for the chain in 250ms (we only have 1 service to call).
@@ -56,6 +58,7 @@ public class AlohaVerticle extends AbstractVerticle {
                 .end(Json.encode(alohaChaining()));
         });
         vertx.createHttpServer().requestHandler(router::accept).listen(8080);
+        System.out.println("Service running at 0.0.0.0:8080");
     }
 
     private String aloha() {
@@ -66,7 +69,7 @@ public class AlohaVerticle extends AbstractVerticle {
     private List<String> alohaChaining() {
         List<String> greetings = new ArrayList<>();
         greetings.add(aloha());
-        greetings.add(createFeign().greetings());
+        greetings.add(getNexService().bonjour());
         return greetings;
     }
 
@@ -76,14 +79,15 @@ public class AlohaVerticle extends AbstractVerticle {
      *
      * @return The feign pointing to the service URL and with Hystrix fallback.
      */
-    private ChainedGreeting createFeign() {
-        return HystrixFeign.builder().target(ChainedGreeting.class, NEXT_ENDPOINT_URL,
-            () -> "Bonjour response (fallback)");
+    private BonjourService getNexService() {
+        return HystrixFeign.builder()
+            .logger(new Logger.ErrorLogger()).logLevel(Level.BASIC)
+            .target(BonjourService.class, NEXT_ENDPOINT_URL,
+                () -> "Bonjour response (fallback)");
     }
 
     private HttpServerResponse addCORSHeaders(HttpServerResponse response) {
-        return response
-            .putHeader("Access-Control-Allow-Origin", "*");
+        return response.putHeader("Access-Control-Allow-Origin", "*");
     }
 
 }

@@ -23,7 +23,6 @@ public class AlohaApplication {
 	public static void main(String[] args) {
 		Vertx vertx = Vertx.vertx();
 		vertx.deployVerticle(new AlohaVerticle());
-		System.out.println("Service running at 0.0.0.0:8080");
 	}
 
 }

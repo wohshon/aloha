@@ -18,9 +18,9 @@ package com.redhat.developers.msa.aloha;
 
 import feign.RequestLine;
 
-public interface ChainedGreeting {
+public interface BonjourService {
 
-	@RequestLine("GET /")
-	public String greetings();
+	@RequestLine("GET /api/bonjour")
+	public String bonjour();
 
 }
