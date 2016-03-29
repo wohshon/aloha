@@ -69,7 +69,7 @@ public class AlohaVerticle extends AbstractVerticle {
     private List<String> alohaChaining() {
         List<String> greetings = new ArrayList<>();
         greetings.add(aloha());
-        greetings.add(getNexService().bonjour());
+        greetings.add(getNextService().bonjour());
         return greetings;
     }
 
@@ -79,7 +79,7 @@ public class AlohaVerticle extends AbstractVerticle {
      *
      * @return The feign pointing to the service URL and with Hystrix fallback.
      */
-    private BonjourService getNexService() {
+    private BonjourService getNextService() {
         return HystrixFeign.builder()
             .logger(new Logger.ErrorLogger()).logLevel(Level.BASIC)
             .target(BonjourService.class, NEXT_ENDPOINT_URL,
