@@ -34,6 +34,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<netflix.feign.version>8.15.1</netflix.feign.version>
 		<vertx.version>3.2.1</vertx.version>
+		<hystrix.version>1.5.1</hystrix.version>
 		<java.main.class>com.redhat.developers.msa.aloha.AlohaApplication</java.main.class>
 	</properties>
 
@@ -58,7 +59,15 @@
 			<artifactId>feign-hystrix</artifactId>
 			<version>${netflix.feign.version}</version>
 		</dependency>
-		<!--  Used to set Timeout -->
+
+		<!-- Vertx Hystrix Stream -->
+		<dependency>
+			<groupId>com.github.kennedyoliveira</groupId>
+			<artifactId>hystrix-vertx-metrics-stream</artifactId>
+			<version>${hystrix.version}</version>
+		</dependency>
+
+		<!-- Used to set FeignHystrix timeout -->
 		<dependency>
 			<groupId>com.netflix.archaius</groupId>
 			<artifactId>archaius-core</artifactId>

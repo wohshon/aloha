@@ -19,6 +19,7 @@ package com.redhat.developers.msa.aloha;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.kennedyoliveira.hystrix.contrib.vertx.metricsstream.EventMetricsStreamHandler;
 import com.netflix.config.ConfigurationManager;
 
 import feign.Logger;
@@ -57,6 +58,9 @@ public class AlohaVerticle extends AbstractVerticle {
                 .putHeader("Content-Type", "application/json")
                 .end(Json.encode(alohaChaining()));
         });
+        router.get(EventMetricsStreamHandler.DEFAULT_HYSTRIX_PREFIX)
+            .handler(EventMetricsStreamHandler.createHandler());
+
         vertx.createHttpServer().requestHandler(router::accept).listen(8080);
         System.out.println("Service running at 0.0.0.0:8080");
     }
