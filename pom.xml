@@ -50,8 +50,19 @@
 		</dependency>
 		<dependency>
 			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-core</artifactId>
+			<version>${netflix.feign.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.feign</groupId>
 			<artifactId>feign-hystrix</artifactId>
 			<version>${netflix.feign.version}</version>
+		</dependency>
+		<!--  Used to set Timeout -->
+		<dependency>
+			<groupId>com.netflix.archaius</groupId>
+			<artifactId>archaius-core</artifactId>
+			<version>0.4.1</version>
 		</dependency>
 	</dependencies>
 
