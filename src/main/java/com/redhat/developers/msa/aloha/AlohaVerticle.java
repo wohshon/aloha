@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.kennedyoliveira.hystrix.contrib.vertx.metricsstream.EventMetricsStreamHandler;
-import com.netflix.config.ConfigurationManager;
 
 import feign.Logger;
 import feign.Logger.Level;
@@ -33,31 +32,25 @@ import io.vertx.ext.web.handler.BodyHandler;
 
 public class AlohaVerticle extends AbstractVerticle {
 
-    /**
-     * The next REST endpoint URL of the service chain to be called.
-     */
-    private static final String NEXT_ENDPOINT_URL = "http://bonjour:8080/";
-
-    /**
-     * Setting Hystrix timeout for the chain in 250ms (we only have 1 service to call).
-     */
-    static {
-        ConfigurationManager.getConfigInstance().setProperty("hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds", 250);
-    }
-
     @Override
     public void start() throws Exception {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
+
+        // Aloha EndPoint
         router.get("/api/aloha").handler(ctx -> {
             addCORSHeaders(ctx.response())
                 .end(aloha());
         });
+
+        // Aloha Chained Endpoint
         router.get("/api/aloha-chaining").handler(ctx -> {
             addCORSHeaders(ctx.response())
                 .putHeader("Content-Type", "application/json")
                 .end(Json.encode(alohaChaining()));
         });
+
+        // Hysrix Stream Endpoint
         router.get(EventMetricsStreamHandler.DEFAULT_HYSTRIX_PREFIX)
             .handler(EventMetricsStreamHandler.createHandler());
 
@@ -86,7 +79,7 @@ public class AlohaVerticle extends AbstractVerticle {
     private BonjourService getNextService() {
         return HystrixFeign.builder()
             .logger(new Logger.ErrorLogger()).logLevel(Level.BASIC)
-            .target(BonjourService.class, NEXT_ENDPOINT_URL,
+            .target(BonjourService.class, "http://bonjour:8080/",
                 () -> "Bonjour response (fallback)");
     }
 
