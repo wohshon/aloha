@@ -66,13 +66,6 @@
 			<artifactId>hystrix-vertx-metrics-stream</artifactId>
 			<version>${hystrix.version}</version>
 		</dependency>
-
-		<!-- Used to set FeignHystrix timeout -->
-		<dependency>
-			<groupId>com.netflix.archaius</groupId>
-			<artifactId>archaius-core</artifactId>
-			<version>0.4.1</version>
-		</dependency>
 	</dependencies>
 
 	<build>
