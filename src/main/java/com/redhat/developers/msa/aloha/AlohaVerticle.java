@@ -16,19 +16,19 @@
  */
 package com.redhat.developers.msa.aloha;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.github.kennedyoliveira.hystrix.contrib.vertx.metricsstream.EventMetricsStreamHandler;
-
 import feign.Logger;
 import feign.Logger.Level;
 import feign.hystrix.HystrixFeign;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AlohaVerticle extends AbstractVerticle {
 
@@ -45,9 +45,11 @@ public class AlohaVerticle extends AbstractVerticle {
 
         // Aloha Chained Endpoint
         router.get("/api/aloha-chaining").handler(ctx -> {
-            addCORSHeaders(ctx.response())
-                .putHeader("Content-Type", "application/json")
-                .end(Json.encode(alohaChaining()));
+            alohaChaining(list -> {
+                addCORSHeaders(ctx.response())
+                    .putHeader("Content-Type", "application/json")
+                    .end(Json.encode(list));
+            });
         });
 
         // Hysrix Stream Endpoint
@@ -63,11 +65,21 @@ public class AlohaVerticle extends AbstractVerticle {
         return String.format("Aloha mai %s", hostname);
     }
 
-    private List<String> alohaChaining() {
-        List<String> greetings = new ArrayList<>();
-        greetings.add(aloha());
-        greetings.add(getNextService().bonjour());
-        return greetings;
+    private void alohaChaining(Handler<List<String>> resultHandler) {
+      vertx.<String>executeBlocking(
+          // Invoke the service in a worker thread, as it's blocking.
+          future -> future.complete(getNextService().bonjour()),
+          ar -> {
+            // Back to the event loop
+            // result cannot be null, hystrix would have called the fallback.
+            String result = ar.result();
+            List<String> greetings = new ArrayList<>();
+            greetings.add(aloha());
+            greetings.add(result);
+            resultHandler.handle(greetings);
+          }
+      );
+
     }
 
     /**
