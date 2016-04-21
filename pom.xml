@@ -46,6 +46,7 @@
 		<vertx.version>3.2.1</vertx.version>
 		<hystrix.version>1.5.1</hystrix.version>
 		<version.exec.plugin>1.4.0</version.exec.plugin>
+		<brave.version>3.5.0</brave.version>
 
 		<!-- fabric8 version -->
 		<fabric8.version>2.2.105</fabric8.version>
@@ -69,7 +70,7 @@
 		<fabric8.env.AB_JOLOKIA_HTTPS>true</fabric8.env.AB_JOLOKIA_HTTPS>
 
 		<!-- Readiness Probe -->
-		<fabric8.readinessProbe.httpGet.path>/api/aloha</fabric8.readinessProbe.httpGet.path>
+		<fabric8.readinessProbe.httpGet.path>/health</fabric8.readinessProbe.httpGet.path>
 		<fabric8.readinessProbe.httpGet.port>8080</fabric8.readinessProbe.httpGet.port>
 		<fabric8.readinessProbe.initialDelaySeconds>5</fabric8.readinessProbe.initialDelaySeconds>
 		<fabric8.readinessProbe.timeoutSeconds>30</fabric8.readinessProbe.timeoutSeconds>
@@ -87,6 +88,11 @@
 			<version>${vertx.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.netflix.feign</groupId>
 			<artifactId>feign-core</artifactId>
 			<version>${netflix.feign.version}</version>
@@ -96,12 +102,39 @@
 			<artifactId>feign-hystrix</artifactId>
 			<version>${netflix.feign.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-httpclient</artifactId>
+			<version>${netflix.feign.version}</version>
+		</dependency>
 
 		<!-- Vertx Hystrix Stream -->
 		<dependency>
 			<groupId>com.github.kennedyoliveira</groupId>
 			<artifactId>hystrix-vertx-metrics-stream</artifactId>
 			<version>${hystrix.version}</version>
+		</dependency>
+
+		<!-- Brave Zipkin -->
+		<dependency>
+			<groupId>com.github.kristofa</groupId>
+			<artifactId>brave-web-servlet-filter</artifactId>
+			<version>${brave.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.kristofa</groupId>
+			<artifactId>brave-apache-http-interceptors</artifactId>
+			<version>${brave.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.kristofa</groupId>
+			<artifactId>brave-spancollector-http</artifactId>
+			<version>${brave.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
 		</dependency>
 	</dependencies>
 
