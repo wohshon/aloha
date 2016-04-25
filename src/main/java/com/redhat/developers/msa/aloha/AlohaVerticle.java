@@ -74,12 +74,13 @@ public class AlohaVerticle extends AbstractVerticle {
             ctx.response().end("I'm ok");
         });
 
-        // Static content
-        router.route("/*").handler(StaticHandler.create());
-
         // Hysrix Stream Endpoint
         router.get(EventMetricsStreamHandler.DEFAULT_HYSTRIX_PREFIX)
             .handler(EventMetricsStreamHandler.createHandler());
+
+        // Static content
+        router.route("/").handler(StaticHandler.create());
+
 
         vertx.createHttpServer().requestHandler(router::accept).listen(8080);
         System.out.println("Service running at 0.0.0.0:8080");
