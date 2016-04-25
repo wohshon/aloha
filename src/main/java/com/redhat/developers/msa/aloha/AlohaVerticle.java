@@ -38,10 +38,12 @@ import feign.httpclient.ApacheHttpClient;
 import feign.hystrix.HystrixFeign;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
-import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.ext.web.handler.StaticHandler;
 
 public class AlohaVerticle extends AbstractVerticle {
 
@@ -49,26 +51,31 @@ public class AlohaVerticle extends AbstractVerticle {
     public void start() throws Exception {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
+        router.route().handler(CorsHandler.create("*")
+            .allowedMethod(HttpMethod.GET)
+            .allowedHeader("Content-Type"));
 
         // Aloha EndPoint
         router.get("/api/aloha").handler(ctx -> {
-            addCORSHeaders(ctx.response())
-                .end(aloha());
+            ctx.response().end(aloha());
         });
 
         // Aloha Chained Endpoint
         router.get("/api/aloha-chaining").handler(ctx -> {
             alohaChaining(list -> {
-                addCORSHeaders(ctx.response())
+                ctx.response()
                     .putHeader("Content-Type", "application/json")
                     .end(Json.encode(list));
             });
         });
 
         // Health Check
-        router.get("/health").handler(ctx -> {
+        router.get("/api/health").handler(ctx -> {
             ctx.response().end("I'm ok");
         });
+
+        // Static content
+        router.route("/*").handler(StaticHandler.create());
 
         // Hysrix Stream Endpoint
         router.get(EventMetricsStreamHandler.DEFAULT_HYSTRIX_PREFIX)
@@ -126,10 +133,6 @@ public class AlohaVerticle extends AbstractVerticle {
             .logger(new Logger.ErrorLogger()).logLevel(Level.BASIC)
             .target(BonjourService.class, url,
                 () -> "Bonjour response (fallback)");
-    }
-
-    private HttpServerResponse addCORSHeaders(HttpServerResponse response) {
-        return response.putHeader("Access-Control-Allow-Origin", "*");
     }
 
 }

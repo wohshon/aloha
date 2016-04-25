@@ -70,7 +70,7 @@
 		<fabric8.env.AB_JOLOKIA_HTTPS>true</fabric8.env.AB_JOLOKIA_HTTPS>
 
 		<!-- Readiness Probe -->
-		<fabric8.readinessProbe.httpGet.path>/health</fabric8.readinessProbe.httpGet.path>
+		<fabric8.readinessProbe.httpGet.path>/api/health</fabric8.readinessProbe.httpGet.path>
 		<fabric8.readinessProbe.httpGet.port>8080</fabric8.readinessProbe.httpGet.port>
 		<fabric8.readinessProbe.initialDelaySeconds>5</fabric8.readinessProbe.initialDelaySeconds>
 		<fabric8.readinessProbe.timeoutSeconds>30</fabric8.readinessProbe.timeoutSeconds>
