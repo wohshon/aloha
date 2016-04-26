@@ -79,7 +79,7 @@ public class AlohaVerticle extends AbstractVerticle {
             .handler(EventMetricsStreamHandler.createHandler());
 
         // Static content
-        router.route("/").handler(StaticHandler.create());
+        router.route("/*").handler(StaticHandler.create());
 
 
         vertx.createHttpServer().requestHandler(router::accept).listen(8080);
