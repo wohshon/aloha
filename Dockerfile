@@ -5,4 +5,4 @@ ENV AB_JOLOKIA_HTTPS true
 
 EXPOSE 8080
 
-ADD target/aloha-fat.jar /app
+ADD target/aloha-fat.jar /app/
