@@ -22,7 +22,7 @@ node {
 }
 
 def deployAloha(String project){
-    sh "oc login --insecure-skip-tls-verify=false -u openshift-dev -p devel https://10.1.2.2:8443"
+    sh "oc login --insecure-skip-tls-verify=true -u openshift-dev -p devel https://10.1.2.2:8443"
     sh "oc new-project ${project} || echo 'Project exists'"
     sh "oc project ${project}"
     sh "oc new-build --binary --name=aloha -l app=aloha || echo 'Build exists'"
