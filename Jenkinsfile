@@ -27,29 +27,29 @@ node {
 
 // Creates a Build and triggers it
 def buildAloha(String project){
-    projectSet()
+    projectSet(project)
     sh "oc new-build --binary --name=aloha -l app=aloha || echo 'Build exists'"
     sh "oc start-build aloha --from-dir=. --follow"
-    projectDeploy()
+    appDeploy()
 }
 
 // Tag the ImageStream from an original project to force a deployment
 def deployAloha(String origProject, String project){
-    projectSet()
+    projectSet(project)
     sh "oc policy add-role-to-user system:image-puller system:serviceaccount:${project}:default -n ${origProject}"
     sh "oc tag ${origProject}/aloha:latest ${project}/aloha:latest"
-    projectDeploy()
+    appDeploy()
 }
 
 // Login and set the project
-def projectSet(){
+def projectSet(String project){
     sh "oc login --insecure-skip-tls-verify=true -u openshift-dev -p devel https://10.1.2.2:8443"
     sh "oc new-project ${project} || echo 'Project exists'"
     sh "oc project ${project}"
 }
 
 // Deploy the project based on a existing ImageStream
-def projectDeploy(){
+def appDeploy(){
     sh "oc new-app aloha -l app=aloha,hystrix.enabled=true || echo 'Aplication already Exists'"
     sh "oc expose service aloha || echo 'Service already exposed'"
     sh 'oc patch dc/aloha -p \'{"spec":{"template":{"spec":{"containers":[{"name":"aloha","ports":[{"containerPort": 8778,"name":"jolokia"}]}]}}}}\''
