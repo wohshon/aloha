@@ -3,15 +3,19 @@ node {
     echo 'Checking out git repository'
     git url: 'https://github.com/redhat-helloworld-msa/aloha'
 
-    stage 'Build project'
-    echo 'Building'
+    stage 'Build project with Maven'
+    echo 'Building project'
     def mvnHome = tool 'M3'
     def javaHome = tool 'jdk8'
     sh "${mvnHome}/bin/mvn package"
 
-    stage 'Deploy to Dev'
-    echo 'Deploying to Dev'
+    stage 'Build image and deploy in Dev'
+    echo 'Building docker image and deploying to Dev'
     buildAloha('helloworld-msa-dev')
+
+    stage 'Automated tests'
+    echo 'This stage simulates automated tests'
+    sh "${mvnHome}/bin/mvn -B -Dmaven.test.failure.ignore verify"
 
     stage 'Deploy to QA'
     echo 'Deploying to QA'
