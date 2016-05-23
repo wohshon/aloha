@@ -43,7 +43,10 @@ def deployAloha(String origProject, String project){
 
 // Login and set the project
 def projectSet(String project){
-    sh "oc login --insecure-skip-tls-verify=true -u openshift-dev -p devel https://10.1.2.2:8443"
+    //Use a credential called openshift-dev
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'openshift-dev', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+        sh "oc login --insecure-skip-tls-verify=true -u $env.USERNAME -p $env.PASSWORD https://10.1.2.2:8443"
+    }
     sh "oc new-project ${project} || echo 'Project exists'"
     sh "oc project ${project}"
 }
